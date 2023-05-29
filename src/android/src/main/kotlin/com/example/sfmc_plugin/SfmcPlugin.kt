@@ -1,5 +1,6 @@
 package com.example.sfmc_plugin
-
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import android.content.Context
 import androidx.annotation.NonNull
 import com.salesforce.marketingcloud.MarketingCloudSdk
@@ -9,6 +10,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import com.google.firebase.messaging.FirebaseMessaging
+import android.util.Log
 
 class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
@@ -17,6 +20,19 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "sfmc_plugin")
         channel.setMethodCallHandler(this)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                return@OnCompleteListener
+            }
+            val token = task.result
+            SFMCSdk.requestSdk { sdk ->
+                sdk.mp {
+                    it.pushMessageManager.setPushToken(token)
+                }
+            }
+        })
+
         context = flutterPluginBinding.applicationContext
     }
 

@@ -62,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
       /// analytics on Android is by default true
       analytics: true,
     );
+    SfmcPlugin().setPushEnabled(true);
 
     setState(() {
       initStatus = isInitialized;

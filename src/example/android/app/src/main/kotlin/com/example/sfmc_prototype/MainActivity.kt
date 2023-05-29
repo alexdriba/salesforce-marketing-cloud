@@ -1,4 +1,4 @@
-package com.sfmc.mobile.androiddev
+package es.dae.cityxerpa
 
 import io.flutter.embedding.android.FlutterActivity
 
